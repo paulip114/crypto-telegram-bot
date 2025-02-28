@@ -10,6 +10,9 @@ services:
       - BINANCE_APIKEY=${BINANCE_APIKEY}
       - BINANCE_APISECRET=${BINANCE_APISECRET}
       - METAMASK_API=${METAMASK_API}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NEWS_API=${NEWS_API}
+      - REDIS_URL=${REDIS_URL}
     volumes:
       - .:/app
     networks:
