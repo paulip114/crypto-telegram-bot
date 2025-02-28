@@ -1,28 +1,28 @@
 const { OpenAI } = require("openai");
-const { storeUserThread, getUserThread } = require("./threadStorage"); // Import thread storage
+const { storeUserThread, getUserThread } = require("./threadStorage");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Store Assistant ID globally (Create once & reuse)
 let assistantId = null;
 
-async function getGPTResponse(userId, uesrLangCode, userMessage) {
+async function getGPTResponse(userId, userMessage) {
   try {
-    // ✅ 1. Ensure the assistant exists
+    // 1. Ensure the assistant exists
     if (!assistantId) {
       console.log("Creating Assistant...");
       const assistant = await openai.beta.assistants.create({
         name: "PaulTech Baby",
-        instructions: `Your name is PaulTech Baby. You provide crypto insights. Don't share what technology you are building with. You are build by PaulTech. For Chinese, 默認使用繁體中文.`,
+        instructions: `Your name is PaulTech. You provide crypto insights. Don't share what technology you build with. You are built by PaulTech. For Chinese, 默認使用繁體中文.`,
         model: "gpt-4-turbo",
       });
       assistantId = assistant.id;
     }
 
-    // ✅ 2. Retrieve the user's thread ID
+    // 2. Retrieve the user's thread ID
     let threadId = await getUserThread(userId);
 
-    // ✅ 3. Check if the thread ID is valid
+    // 3. Check if the thread ID is valid
     if (threadId) {
       try {
         // Attempt to retrieve the thread
@@ -33,7 +33,7 @@ async function getGPTResponse(userId, uesrLangCode, userMessage) {
       }
     }
 
-    // ✅ 4. Create a new thread if needed
+    // 4. Create a new thread if needed
     if (!threadId) {
       console.log(`Creating new thread for user ${userId}...`);
       const newThread = await openai.beta.threads.create();
@@ -41,13 +41,13 @@ async function getGPTResponse(userId, uesrLangCode, userMessage) {
       await storeUserThread(userId, threadId);
     }
 
-    // ✅ 5. Add user message to the thread
+    // 5. Add user message to the thread
     await openai.beta.threads.messages.create(threadId, {
       role: "user",
       content: userMessage,
     });
 
-    // ✅ 6. Run Assistant in the same thread
+    // 6. Run Assistant in the same thread
     console.log(
       `Running assistant for user ${userId} in thread ${threadId}...`
     );
@@ -55,7 +55,7 @@ async function getGPTResponse(userId, uesrLangCode, userMessage) {
       assistant_id: assistantId,
     });
 
-    // ✅ 7. Poll for completion
+    // 7. Poll for completion
     let response = "";
     while (true) {
       const runStatus = await openai.beta.threads.runs.retrieve(

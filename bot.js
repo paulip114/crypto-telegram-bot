@@ -12,9 +12,6 @@ const binance = new Binance().options({
   APISECRET: process.env.BINANCE_APISECRET,
 });
 
-// Store user threads (Temporary: Use a DB for persistence)
-const userThreads = {};
-
 // Import commands
 const startCommand = require("./src/commands/start");
 const helpCommand = require("./src/commands/help");
@@ -34,34 +31,18 @@ bot.command("sell", sellCommand(binance)); // Pass Binance instance
 bot.command("dex", dexCommand);
 bot.command("news", newsCommand);
 
-// Handle all non-command messages
-// bot.on(message("text"), async (ctx) => {
-//   const userMessage = ctx.message.text;
-//   await ctx.sendChatAction("typing");
-//   const botResponse = await getGPTResponse(threadId, userMessage);
-//   threadId = botResponse.threadId
-//   ctx.reply(botResponse.response);
-// });
-
 bot.on(message("text"), async (ctx) => {
   const userId = ctx.message.from.id;
-  const uesrLangCode = ctx.message.from.language_code;
   const userMessage = ctx.message.text;
 
   await ctx.sendChatAction("typing");
 
-  // ✅ Retrieve or create thread for this user
   let threadId = await getUserThread(userId);
-
-  // ✅ Call GPT function
-  const botResponse = await getGPTResponse(userId, uesrLangCode, userMessage);
-
-  // ✅ Store updated threadId
+  const botResponse = await getGPTResponse(userId, userMessage);
   if (!threadId) {
     await storeUserThread(userId, botResponse.threadId);
   }
 
-  // ✅ Reply with GPT response
   ctx.reply(botResponse.response);
 });
 
