@@ -1,5 +1,5 @@
 const { OpenAI } = require("openai");
-const { storeUserThread, getUserThread } = require("./threadStorage");
+const { storeUserThread, getUserThread } = require("../threadStorage"); // Import thread storage
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -8,7 +8,7 @@ let assistantId = null;
 
 async function getGPTResponse(userId, userMessage) {
   try {
-    // ✅ Create the assistant once
+    // ✅ 1. Ensure the assistant exists
     if (!assistantId) {
       console.log("Creating Assistant...");
       const assistant = await openai.beta.assistants.create({
@@ -20,8 +20,21 @@ async function getGPTResponse(userId, userMessage) {
       assistantId = assistant.id;
     }
 
-    // ✅ Retrieve the user's thread or create a new one
+    // ✅ 2. Retrieve the user's thread ID
     let threadId = await getUserThread(userId);
+
+    // ✅ 3. Check if the thread ID is valid
+    if (threadId) {
+      try {
+        // Attempt to retrieve the thread
+        await openai.beta.threads.retrieve(threadId);
+      } catch (error) {
+        console.error(`⚠️ Thread ${threadId} not found. Creating a new one...`);
+        threadId = null; // Reset thread ID to create a new one
+      }
+    }
+
+    // ✅ 4. Create a new thread if needed
     if (!threadId) {
       console.log(`Creating new thread for user ${userId}...`);
       const newThread = await openai.beta.threads.create();
@@ -29,13 +42,13 @@ async function getGPTResponse(userId, userMessage) {
       await storeUserThread(userId, threadId);
     }
 
-    // ✅ Add user message to the thread
+    // ✅ 5. Add user message to the thread
     await openai.beta.threads.messages.create(threadId, {
       role: "user",
       content: userMessage,
     });
 
-    // ✅ Run Assistant in the same thread
+    // ✅ 6. Run Assistant in the same thread
     console.log(
       `Running assistant for user ${userId} in thread ${threadId}...`
     );
@@ -43,7 +56,7 @@ async function getGPTResponse(userId, userMessage) {
       assistant_id: assistantId,
     });
 
-    // ✅ Poll for completion
+    // ✅ 7. Poll for completion
     let response = "";
     while (true) {
       const runStatus = await openai.beta.threads.runs.retrieve(
