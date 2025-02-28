@@ -1,6 +1,8 @@
 require("dotenv").config();
 const { Telegraf } = require("telegraf");
+const { message } = require("telegraf/filters");
 const Binance = require("node-binance-api");
+const { getGPTResponse } = require("./src/GPT/autoResponse");
 
 // Credential
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -27,6 +29,14 @@ bot.command("buy", buyCommand(binance)); // Pass Binance instance
 bot.command("sell", sellCommand(binance)); // Pass Binance instance
 bot.command("dex", dexCommand);
 bot.command("news", newsCommand);
+
+// Handle all non-command messages
+bot.on(message("text"), async (ctx) => {
+  const userMessage = ctx.message.text;
+  await ctx.sendChatAction("typing");
+  const botResponse = await getGPTResponse(userMessage);
+  ctx.reply(botResponse);
+});
 
 // Start the bot
 bot.launch();

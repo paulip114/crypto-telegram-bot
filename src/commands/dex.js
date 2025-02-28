@@ -71,7 +71,7 @@ module.exports = async (ctx) => {
         "❌ Invalid wallet address. Please enter a valid EVM or Solana address."
       );
     }
-
+    await ctx.sendChatAction("typing");
     ctx.reply("🔍 Detecting blockchain, please wait...");
 
     // Detect blockchain

@@ -15,12 +15,14 @@ async function fetchCryptoNews() {
 
 module.exports = async (ctx) => {
   ctx.reply("🔍 Fetching crypto news, please wait...");
-
+  await ctx.sendChatAction("typing");
   const newsArticles = await fetchCryptoNews();
   const articlesTitle = newsArticles
     .map((article, index) => `${index + 1}. ${article.title}`)
     .join("\n\n");
 
   ctx.reply(articlesTitle);
-  ctx.reply(await summarizeCryptoNews(newsArticles));
+  await ctx.sendChatAction("typing");
+  const summary = await summarizeCryptoNews(newsArticles);
+  ctx.reply(summary);
 };
