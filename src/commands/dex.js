@@ -8,12 +8,12 @@ const RPC_URLS = {
   bsc: "https://bsc-dataseed.binance.org/",
   polygon: "https://polygon-rpc.com/",
   avalanche: "https://api.avax.network/ext/bc/C/rpc",
-  solana: "https://api.mainnet-beta.solana.com", // Solana RPC URL
+  solana: "https://api.mainnet-beta.solana.com",
 };
 
 // Function to create a Web3 instance for Ethereum-based blockchains
 const getWeb3Instance = (chain) => {
-  if (!RPC_URLS[chain] || chain === "solana") return null; // Solana handled separately
+  if (!RPC_URLS[chain] || chain === "solana") return null;
   return new Web3(new Web3.providers.HttpProvider(RPC_URLS[chain]));
 };
 
@@ -110,7 +110,6 @@ module.exports = async (ctx) => {
       currency = "ETH";
     }
 
-    // Send the reply
     ctx.reply(
       `✅ Detected Blockchain: ${detectedChain.toUpperCase()}\n💰 Wallet Balance: ${balanceInNativeCurrency} ${currency}`
     );

@@ -1,7 +1,7 @@
 const { summarizeCryptoNews } = require("../GPT/summarizeNews");
 const axios = require("axios");
 async function fetchCryptoNews() {
-  const API_KEY = process.env.NEWS_API; // Replace with your API key
+  const API_KEY = process.env.NEWS_API;
   const url = `https://cryptopanic.com/api/v1/posts/?auth_token=${API_KEY}&currencies=BTC,ETH&kind=news`;
 
   try {
