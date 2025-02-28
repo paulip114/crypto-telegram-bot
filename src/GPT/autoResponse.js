@@ -1,5 +1,5 @@
 const { OpenAI } = require("openai");
-const { storeUserThread, getUserThread } = require("../threadStorage"); // Import thread storage
+const { storeUserThread, getUserThread } = require("./threadStorage"); // Import thread storage
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
