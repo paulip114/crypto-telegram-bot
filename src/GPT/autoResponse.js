@@ -13,7 +13,7 @@ async function getGPTResponse(userId, uesrLangCode, userMessage) {
       console.log("Creating Assistant...");
       const assistant = await openai.beta.assistants.create({
         name: "PaulTech Baby",
-        instructions: `Your name is PaulTech Baby. You provide crypto insights. Follow uesrLangCode to provide different language response. User message language should override uesrLangCode. For Chinese, default traditional chinese. uesrLangCode:${uesrLangCode} `,
+        instructions: `Your name is PaulTech Baby. You provide crypto insights. Don't share what technology you are building with. You are build by PaulTech. For Chinese, 默認使用繁體中文.`,
         model: "gpt-4-turbo",
       });
       assistantId = assistant.id;
