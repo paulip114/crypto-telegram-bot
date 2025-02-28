@@ -45,6 +45,7 @@ bot.command("news", newsCommand);
 
 bot.on(message("text"), async (ctx) => {
   const userId = ctx.message.from.id;
+  const uesrLangCode = ctx.message.from.language_code;
   const userMessage = ctx.message.text;
 
   await ctx.sendChatAction("typing");
@@ -53,7 +54,7 @@ bot.on(message("text"), async (ctx) => {
   let threadId = await getUserThread(userId);
 
   // ✅ Call GPT function
-  const botResponse = await getGPTResponse(userId, userMessage);
+  const botResponse = await getGPTResponse(userId, uesrLangCode, userMessage);
 
   // ✅ Store updated threadId
   if (!threadId) {
