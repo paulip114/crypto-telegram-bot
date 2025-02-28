@@ -15,7 +15,7 @@ const helpCommand = require("./src/commands/help");
 const priceCommand = require("./src/commands/price");
 const buyCommand = require("./src/commands/buy");
 const sellCommand = require("./src/commands/sell");
-const dexCommand = require("./src/commands/dexBalance");
+const dexCommand = require("./src/commands/dex");
 const newsCommand = require("./src/commands/news");
 // getCexBalance = require("")
 
