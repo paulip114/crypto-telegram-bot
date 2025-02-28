@@ -8,8 +8,9 @@ A Telegram bot that provides **real-time cryptocurrency prices, alerts, and port
 
 ✅ Fetch live **crypto prices** from CoinGecko.
 ✅ Track your **crypto portfolio**.
-✅ Fetch real-time **Binance trading data**.
-✅ Supports **Telegram commands** like `/price`, `/buy`, `/sell`, `/dex` and `/help`.
+✅ Fetch real-time **CoinGecko trading data**.
+✅ Supports **Telegram commands** like `/price`, `/news`, `/buy`, `/sell`, `/dex` and `/help`.
+✅ GPT Investment advice base on recent news
 ✅ Deployable on **Railway, AWS, or Heroku**.
 
 ---
