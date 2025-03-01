@@ -6,11 +6,11 @@ A Telegram bot that provides **real-time cryptocurrency prices, alerts, and port
 
 ## 📌 Features
 
-✅ Fetch live **crypto prices** from CoinGecko.
-✅ Track your **crypto portfolio**.
-✅ Fetch real-time **CoinGecko trading data**.
-✅ Supports **Telegram commands** like `/price`, `/news`, `/buy`, `/sell`, `/dex` and `/help`.
-✅ GPT Investment advice base on recent news
+✅ Fetch live **crypto prices** from CoinGecko.  
+✅ Track your **crypto portfolio**.  
+✅ Fetch real-time **CoinGecko trading data**.  
+✅ Supports **Telegram commands** like `/price`, `/news`, `/buy`, `/sell`, `/dex`, `/setting` and `/help`.  
+✅ GPT Investment advice based on recent news.  
 ✅ Deployable on **Railway, AWS, or Heroku**.
 
 ---
@@ -58,7 +58,25 @@ Your bot is now running! Open **Telegram**, find your bot, and try:
 
 ---
 
-## 📜 Available Commands
+## 🐝 System Architecture
+
+```mermaid
+graph TD
+  User["💬 Telegram User"] --> |"/buy BTCUSDT 0.01"| Bot[🤖 "Node.js Telegram Bot"]
+
+  Bot --> |"Query GPT Thread"| Redis[🔵 "Redis (GPT Thread Storage)"]
+  Bot --> |"Retrieve Encrypted API"| MongoDB[🟢 "MongoDB (User Binance API)"]
+
+  MongoDB --> |"Decrypt API Key"| Bot
+  Bot --> |"Execute Binance Trade"| Binance[🛋 "Binance API"]
+
+  Redis --> |"Retrieve GPT Thread"| Bot
+  Redis --> |"Store GPT Conversation"| Bot
+```
+
+---
+
+## 🌟 Available Commands
 
 | Command                   | Description                                                        |
 | ------------------------- | ------------------------------------------------------------------ |
@@ -66,8 +84,8 @@ Your bot is now running! Open **Telegram**, find your bot, and try:
 | `/help`                   | Show available commands                                            |
 | `/price <coin>`           | Get the current price of a cryptocurrency (e.g., `/price bitcoin`) |
 | `/dex`                    | View your dex wallet balance                                       |
-| `/buy <coin> <quantity>`  | Buy crypto with Binance api (e.g., `/buy bitcoin 0.5`)             |
-| `/sell <coin> <quantity>` | Sell crypto with Binance api (e.g., `/sell bitcoin 0.5`)           |
+| `/buy <coin> <quantity>`  | Buy crypto with Binance API (e.g., `/buy bitcoin 0.5`)             |
+| `/sell <coin> <quantity>` | Sell crypto with Binance API (e.g., `/sell bitcoin 0.5`)           |
 
 ---
 
@@ -79,7 +97,11 @@ You can deploy the bot on **Railway, Heroku, or AWS**.
 
 1. Push your bot to **GitHub**.
 2. Go to [Railway.app](https://railway.app/) → **New Project** → **Deploy from GitHub**.
-3. Set the **environment variable** `TELEGRAM_BOT_TOKEN`, `BINANCE_APIKEY`, `BINANCE_APISECRET`, `METAMASK_API`.
+3. Set the **environment variables**:
+   - `TELEGRAM_BOT_TOKEN`
+   - `BINANCE_APIKEY`
+   - `BINANCE_APISECRET`
+   - `METAMASK_API`
 4. Click **Deploy** 🚀.
 
 ---
@@ -95,7 +117,7 @@ You can deploy the bot on **Railway, Heroku, or AWS**.
 
 Feel free to **fork this project**, submit a PR, or suggest new features!
 
-📧 Contact: [paulip114@gmail.com](mailto:paulip114@gmail.com)
+💎 Contact: [paulip114@gmail.com](mailto:paulip114@gmail.com)
 
 ---
 
@@ -109,7 +131,7 @@ Feel free to **fork this project**, submit a PR, or suggest new features!
 
 ---
 
-## 📜 License
+## 🐟 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
