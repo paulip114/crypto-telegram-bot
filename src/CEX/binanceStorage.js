@@ -22,8 +22,11 @@ async function storeUserBinanceKey(userId, apiKey, apiSecret) {
 
 async function getUserBinanceKey(userId) {
   const user = await UserBinanceKey.findOne({ userId });
+  const decryptedApiKey = decrypt(user.apiKey);
+  const decryptedApiSecret = decrypt(user.apiSecret);
+
   return user
-    ? { apiKey: decrypt(user.apiKey), apiSecret: decrypt(user.apiSecret) }
+    ? { apiKey: decryptedApiKey, apiSecret: decryptedApiSecret }
     : null;
 }
 

@@ -11,23 +11,40 @@ function encrypt(text) {
     Buffer.from(ENCRYPTION_KEY),
     iv
   );
-  let encrypted = cipher.update(text);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return iv.toString("hex") + ":" + encrypted.toString("hex");
+
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+
+  const authTag = cipher.getAuthTag().toString("hex");
+
+  return `${iv.toString("hex")}:${encrypted}:${authTag}`;
 }
 
 function decrypt(text) {
-  const textParts = text.split(":");
-  const iv = Buffer.from(textParts.shift(), "hex");
-  const encryptedText = Buffer.from(textParts.join(":"), "hex");
-  const decipher = crypto.createDecipheriv(
-    "aes-256-gcm",
-    Buffer.from(ENCRYPTION_KEY),
-    iv
-  );
-  let decrypted = decipher.update(encryptedText);
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+  try {
+    const textParts = text.split(":");
+    if (textParts.length !== 3)
+      throw new Error("Invalid encrypted data format");
+
+    const iv = Buffer.from(textParts[0], "hex");
+    const encryptedText = Buffer.from(textParts[1], "hex");
+    const authTag = Buffer.from(textParts[2], "hex");
+
+    const decipher = crypto.createDecipheriv(
+      "aes-256-gcm",
+      Buffer.from(ENCRYPTION_KEY),
+      iv
+    );
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(encryptedText, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+  } catch (error) {
+    console.error("❌ Decryption Error:", error.message);
+    throw new Error("Decryption failed. Data might be corrupted or tampered.");
+  }
 }
 
 module.exports = { encrypt, decrypt };
