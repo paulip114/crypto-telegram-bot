@@ -1,25 +1,42 @@
-module.exports = (binance) => async (ctx) => {
+const Binance = require("node-binance-api");
+const { getUserBinanceKey } = require("../CEX/binanceStorage");
+
+module.exports = async (ctx) => {
+  const message = ctx.message.text.split(" ");
+  if (message.length < 3) return ctx.reply("❌ Usage: /sell BTCUSDT 0.01");
+
+  const userId = ctx.message.from.id;
+  const symbol = message[1].toUpperCase();
+  const quantity = parseFloat(message[2]);
+
+  const userKeys = await getUserBinanceKey(userId);
+  if (!userKeys) {
+    return ctx.reply(
+      "⚠️ Please set your Binance API keys first: /setbinance API_KEY API_SECRET"
+    );
+  }
+
+  const userBinance = new Binance().options({
+    APIKEY: userKeys.apiKey,
+    APISECRET: userKeys.apiSecret,
+  });
+
   try {
-    const message = ctx.message.text.split(" ");
-    if (message.length < 3) return ctx.reply("Usage: /sell BTCUSDT 0.01");
-
-    const symbol = message[1].toUpperCase();
-    const quantity = parseFloat(message[2]);
-
-    if (isNaN(quantity) || quantity <= 0) {
-      return ctx.reply(
-        "Invalid quantity. Please enter a valid number greater than zero."
-      );
+    const result = await userBinance.marketSell(symbol, quantity);
+    ctx.reply(`✅ Trade Executed: Sold ${quantity} ${symbol}`);
+  } catch (error) {
+    let errorMessage = "❌ Trade Failed: Unknown error";
+    if (error.body) {
+      try {
+        const errorDetails = JSON.parse(error.body);
+        errorMessage = `⚠️ Sell Order Failed: ${errorDetails.msg}`;
+      } catch (parseError) {
+        console.error("Error parsing Binance response:", parseError);
+      }
     }
 
-    // Execute sell trade using Binance API
-    const result = await binance.marketSell(symbol, quantity).catch((err) => {
-      throw new Error(`Binance API Error: ${err.message}`);
-    });
+    console.error("Trade Error:", errorMessage);
 
-    ctx.reply(`✅ Sell Order Executed: ${quantity} ${symbol}`);
-  } catch (error) {
-    console.error("Sell Trade Error:", error);
-    ctx.reply(`⚠️ Sell Order Failed: ${error.message}`);
+    ctx.reply(errorMessage);
   }
 };

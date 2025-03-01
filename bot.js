@@ -1,16 +1,15 @@
 require("dotenv").config();
 const { Telegraf } = require("telegraf");
 const { message } = require("telegraf/filters");
-const Binance = require("node-binance-api");
 const { getGPTResponse } = require("./src/GPT/autoResponse");
 const { storeUserThread, getUserThread } = require("./src/GPT/threadStorage");
+const connectDB = require("./src/db");
+
+// Connect MongoDB
+connectDB();
 
 // Credential
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
-const binance = new Binance().options({
-  APIKEY: process.env.BINANCE_APIKEY,
-  APISECRET: process.env.BINANCE_APISECRET,
-});
 
 // Import commands
 const startCommand = require("./src/commands/start");
@@ -20,17 +19,19 @@ const buyCommand = require("./src/commands/buy");
 const sellCommand = require("./src/commands/sell");
 const dexCommand = require("./src/commands/dex");
 const newsCommand = require("./src/commands/news");
-// getCexBalance = require("")
+const setBinanceCommand = require("./src/commands/setBinance");
 
 // Register commands
 bot.start(startCommand);
 bot.command("help", helpCommand);
 bot.command("price", priceCommand);
-bot.command("buy", buyCommand(binance)); // Pass Binance instance
-bot.command("sell", sellCommand(binance)); // Pass Binance instance
+bot.command("buy", buyCommand);
+bot.command("sell", sellCommand);
 bot.command("dex", dexCommand);
 bot.command("news", newsCommand);
+bot.command("setting", setBinanceCommand);
 
+// Handle user text message
 bot.on(message("text"), async (ctx) => {
   const userId = ctx.message.from.id;
   const userMessage = ctx.message.text;

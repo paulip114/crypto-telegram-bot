@@ -13,7 +13,9 @@
   "dependencies": {
     "@solana/web3.js": "^1.98.0",
     "axios": "^1.8.1",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "mongoose": "^8.11.0",
     "node-binance-api": "^0.13.4",
     "openai": "^4.86.1",
     "redis": "^4.7.0",
