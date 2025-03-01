@@ -62,14 +62,11 @@ Your bot is now running! Open **Telegram**, find your bot, and try:
 
 ```mermaid
 graph TD
-  User["💬 Telegram User"] --> |"/buy BTCUSDT 0.01"| Bot[🤖 "Node.js Telegram Bot"]
-
-  Bot --> |"Query GPT Thread"| Redis[🔵 "Redis (GPT Thread Storage)"]
-  Bot --> |"Retrieve Encrypted API"| MongoDB[🟢 "MongoDB (User Binance API)"]
-
+  User["Telegram User"] --> |"/buy BTCUSDT 0.01"| Bot["Node.js Telegram Bot"]
+  Bot --> |"Query GPT Thread"| Redis["Redis (GPT Thread Storage)"]
+  Bot --> |"Retrieve Encrypted API"| MongoDB["MongoDB (User Binance API)"]
   MongoDB --> |"Decrypt API Key"| Bot
-  Bot --> |"Execute Binance Trade"| Binance[🛋 "Binance API"]
-
+  Bot --> |"Execute Binance Trade"| Binance["Binance API"]
   Redis --> |"Retrieve GPT Thread"| Bot
   Redis --> |"Store GPT Conversation"| Bot
 ```
