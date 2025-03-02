@@ -47,7 +47,7 @@ const detectBlockchain = async (userAddress, isEvmAddress, isSolanaAddress) => {
 // Export function properly to receive `ctx` from Telegraf
 module.exports = async (ctx) => {
   try {
-    if (!ctx || !ctx.message || !ctx.message.text) {
+    if (!ctx?.message?.text) {
       console.error("❌ Error: Invalid Telegram context.");
       return;
     }
@@ -115,8 +115,6 @@ module.exports = async (ctx) => {
     );
   } catch (error) {
     console.error("❌ Get DEX balance Error:", error);
-    if (ctx && ctx.reply) {
-      ctx.reply(`⚠️ Failed to get balance.`);
-    }
+    ctx?.reply?.(`⚠️ Failed to get balance.`);
   }
 };
