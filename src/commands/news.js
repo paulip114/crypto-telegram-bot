@@ -22,6 +22,7 @@ module.exports = async (ctx) => {
     .join("\n\n");
 
   ctx.reply(articlesTitle);
+  await new Promise((resolve) => setTimeout(resolve, 100)); // added small delay to avoid typing render issue
   await ctx.sendChatAction("typing");
   const summary = await summarizeCryptoNews(newsArticles);
   ctx.reply(summary);
