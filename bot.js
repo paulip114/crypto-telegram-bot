@@ -76,7 +76,7 @@ async function monitorAndTradeNews() {
 
 // Run news monitoring **every 5 minutes**
 // monitorAndTradeNews(); // run when start the bot.js - for testing
-setInterval(monitorAndTradeNews, 300000); //300000
+setInterval(monitorAndTradeNews, 43200000); //300000
 
 // Start the bot
 bot.launch();
