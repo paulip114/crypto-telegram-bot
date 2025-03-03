@@ -3,6 +3,7 @@ const { Telegraf } = require("telegraf");
 const { message } = require("telegraf/filters");
 const { getGPTResponse } = require("./src/GPT/autoResponse");
 const { storeUserThread, getUserThread } = require("./src/GPT/threadStorage");
+const { eventDrivenTrading } = require("./src/CEX/eventDrivenTrading");
 const connectDB = require("./src/db");
 
 // Connect MongoDB
@@ -35,6 +36,7 @@ bot.command("setting", setBinanceCommand);
 bot.on(message("text"), async (ctx) => {
   const userId = ctx.message.from.id;
   const userMessage = ctx.message.text;
+  console.log(ctx.message);
 
   await ctx.sendChatAction("typing");
 
@@ -46,6 +48,32 @@ bot.on(message("text"), async (ctx) => {
 
   ctx.reply(botResponse.response);
 });
+
+// 🚀 **Modified: Monitor Crypto News and Send Alerts**
+async function monitorAndTradeNews() {
+  console.log("🔍 Checking for market-moving crypto news...");
+
+  const newsMessage = await eventDrivenTrading();
+
+  if (
+    newsMessage &&
+    newsMessage !== "ℹ️ No new market-moving news detected." &&
+    newsMessage !== "ℹ️ No new unique news to process."
+  ) {
+    console.log("🚀 Positive news detected! Sending alert...");
+    bot.telegram.sendMessage(
+      process.env.TELEGRAM_CHAT_ID,
+      `📢 *Market-Moving News Alert* 🚀\n\n${newsMessage}`,
+      { parse_mode: "Markdown" }
+    );
+  } else {
+    console.log("ℹ️ No market-moving news found.");
+  }
+}
+
+// Run news monitoring **every 5 minutes**
+// monitorAndTradeNews();
+// setInterval(monitorAndTradeNews, 30000); //300000
 
 // Start the bot
 bot.launch();
