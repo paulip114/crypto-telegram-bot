@@ -72,7 +72,7 @@ async function monitorAndTradeNews() {
 }
 
 // Run news monitoring **every 5 minutes**
-// monitorAndTradeNews();
+monitorAndTradeNews();
 // setInterval(monitorAndTradeNews, 30000); //300000
 
 // Start the bot

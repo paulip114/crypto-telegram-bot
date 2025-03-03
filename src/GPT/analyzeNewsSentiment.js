@@ -6,8 +6,10 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 async function analyzeNewsSentiment(newsText) {
   const newsObj = z.object({
     newsTitle: z.string(),
-    sentiment: z.string(),
+    signal: z.string(),
+    impact: z.string(),
     explaination: z.string(),
+    suggestedTradingAction: z.string(),
   });
   const result = z.object({
     newsSentiment: z.array(newsObj),
@@ -23,8 +25,10 @@ async function analyzeNewsSentiment(newsText) {
           Reply with only one word: Positive, Neutral, or Negative.
           For each news, provide:
           - news title
-          - sentiment (Positive, Neutral, or Negative)
-          - explaination of sentiment (within 20 words)
+          - signal (Strongly Positive, Positive, Neutral, Negative, Strongly Negative)
+          - possible market impact (Major Bullish Signal, Bullish Signal, No significant impact, Bearish Signal, Major Bearish Signal)
+          - explaination of signal (within 20 words)
+          - suggested trading action (list one)
           News: "${newsText}"`,
         },
       ],

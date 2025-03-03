@@ -2,9 +2,11 @@ const axios = require("axios");
 const { analyzeNewsSentiment } = require("../GPT/analyzeNewsSentiment");
 
 const sentimentMap = {
-  Positive: "✅ Positive",
-  Negative: "❌ Negative",
-  Neutral: "❓ Neutral",
+  "Strongly Positive": "🚀 Strongly Positive",
+  Positive: "📈 Positive",
+  Neutral: "⚖️ Neutral",
+  Negative: "📉 Negative",
+  "Strongly Negative": "⛔ Strongly Negative",
 };
 
 async function eventDrivenTrading() {
@@ -27,10 +29,11 @@ async function eventDrivenTrading() {
   const replyMessage = gptResult.newsSentiment
     .map((result, index) =>
       `
-        🔹 ${index + 1}. 
-        📰 ${result.newsTitle}
-        📈 **Sentiment:** ${sentimentMap[result.sentiment]}
-        🧐 **Reason:** ${result.explaination}
+        🔹 ${index + 1}. ${result.newsTitle}
+        📈 Signal: ${sentimentMap[result.signal]}
+        📊 Possible Market Impact: ${result.impact}
+        🛠 Suggested Trading Action: ${result.suggestedTradingAction}
+        🧐 Reason: ${result.explaination}
       `.trim()
     )
     .join("\n\n");
