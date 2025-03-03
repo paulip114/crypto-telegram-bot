@@ -9,11 +9,19 @@ const sentimentMap = {
   "Strongly Negative": "⛔ Strongly Negative",
 };
 
-async function eventDrivenTrading() {
-  const newsArticles = await getFilteredCryptoNews();
+async function eventDrivenTrading(previousNewsArticlesIds) {
+  const newsArticles = await getFilteredCryptoNews(previousNewsArticlesIds);
+
+  const newsArticlesIds = [
+    ...(newsArticles?.map((article) => article.id) || []),
+    ...(previousNewsArticlesIds || []),
+  ];
+
+  let replyMessage = "";
 
   if (newsArticles.length === 0) {
     console.log("❌ No relevant news articles found.");
+    return { replyMessage, newsArticlesIds };
   }
 
   const articlesTitle = newsArticles
@@ -26,7 +34,7 @@ async function eventDrivenTrading() {
     return "❌ Error processing sentiment analysis.";
   }
 
-  const replyMessage = gptResult.newsSentiment
+  replyMessage = gptResult.newsSentiment
     .map((result, index) =>
       `
         🔹 ${index + 1}. ${result.newsTitle}
@@ -38,7 +46,7 @@ async function eventDrivenTrading() {
     )
     .join("\n\n");
 
-  return replyMessage;
+  return { replyMessage, newsArticlesIds };
 }
 
 async function fetchCryptoNews() {
@@ -83,9 +91,15 @@ function filterRelevantNews(newsArticles) {
   });
 }
 
-async function getFilteredCryptoNews() {
+async function getFilteredCryptoNews(previousNewsArticlesIds) {
   const cryptoNews = await fetchCryptoNews();
-  const relevantNews = filterRelevantNews(cryptoNews);
+  let relevantNews = filterRelevantNews(cryptoNews);
+
+  if (previousNewsArticlesIds) {
+    relevantNews = relevantNews.filter((article) => {
+      return !previousNewsArticlesIds.includes(article.id);
+    });
+  }
 
   return relevantNews;
 }

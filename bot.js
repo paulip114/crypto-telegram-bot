@@ -49,21 +49,24 @@ bot.on(message("text"), async (ctx) => {
   ctx.reply(botResponse.response);
 });
 
-// 🚀 **Modified: Monitor Crypto News and Send Alerts**
+// Monitor Crypto News and Send Alerts**
+let previousNewsArticlesIds = [];
+
 async function monitorAndTradeNews() {
   console.log("🔍 Checking for market-moving crypto news...");
 
-  const newsMessage = await eventDrivenTrading();
+  const newsMessage = await eventDrivenTrading(previousNewsArticlesIds);
+  previousNewsArticlesIds = newsMessage.newsArticlesIds;
 
   if (
-    newsMessage &&
-    newsMessage !== "ℹ️ No new market-moving news detected." &&
-    newsMessage !== "ℹ️ No new unique news to process."
+    newsMessage.replyMessage &&
+    newsMessage.replyMessage !== "ℹ️ No new market-moving news detected." &&
+    newsMessage.replyMessage !== "ℹ️ No new unique news to process."
   ) {
-    console.log("🚀 Positive news detected! Sending alert...");
+    console.log("🚀 News detected! Sending alert...");
     bot.telegram.sendMessage(
       process.env.TELEGRAM_CHAT_ID,
-      `📢 *Market-Moving News Alert* 🚀\n\n${newsMessage}`,
+      `📢 *Market-Moving News Alert* 🚀\n\n${newsMessage.replyMessage}`,
       { parse_mode: "Markdown" }
     );
   } else {
@@ -72,8 +75,8 @@ async function monitorAndTradeNews() {
 }
 
 // Run news monitoring **every 5 minutes**
-monitorAndTradeNews();
-// setInterval(monitorAndTradeNews, 30000); //300000
+// monitorAndTradeNews(); // run when start the bot.js - for testing
+setInterval(monitorAndTradeNews, 300000); //300000
 
 // Start the bot
 bot.launch();
