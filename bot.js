@@ -3,7 +3,7 @@ const { Telegraf } = require("telegraf");
 const { message } = require("telegraf/filters");
 const { getGPTResponse } = require("./src/GPT/autoResponse");
 const { storeUserThread, getUserThread } = require("./src/GPT/threadStorage");
-const { eventDrivenTrading } = require("./src/CEX/eventDrivenTrading");
+const { eventDrivenTrading } = require("./src/CEX/eventDriven");
 const connectDB = require("./src/db");
 
 // Connect MongoDB
@@ -36,7 +36,6 @@ bot.command("setting", setBinanceCommand);
 bot.on(message("text"), async (ctx) => {
   const userId = ctx.message.from.id;
   const userMessage = ctx.message.text;
-  console.log(ctx.message);
 
   await ctx.sendChatAction("typing");
 
